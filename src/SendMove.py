@@ -11,9 +11,22 @@ from tf.transformations import quaternion_from_euler, euler_from_quaternion
 class SendMove (object):
     def __init__(self):
         self.pub = rospy.Publisher('/ur_driver/URScript', String, queue_size=10, latch=True)
-        self.addr = '/home/suii/catkin_ws/src/ur_script_control/yaml/poses.yaml'
+        self.addr = '/home/suii/catkin_ws/src/suii_manipulation/yaml/poses.yaml'
 
     def buildMove(self, moveType, space, pose, radius=0):
+        """This function builds a string for sending a move command to URScript
+        
+        Arguments:
+            moveType {string} -- [description]
+            space {string} -- [description]
+            pose {string} -- [description]
+        
+        Keyword Arguments:
+            radius {int} -- [description] (default: {0})
+        
+        Returns:
+            [type] -- [description]
+        """
         if moveType == "l":
             acceleration = 0.3
             speed = 0.3
@@ -23,6 +36,19 @@ class SendMove (object):
         time = 0 #Time the move must take
         array = list(pose)
         sendable = "move%s(%s%s, a=%s, v=%s, t=%s, r=%s)"%(moveType, space, array, acceleration, speed, time, radius)
+        return sendable
+
+    def buildBlendMove(self, moveType, space, pose, secondPose, radius=0):
+        if moveType == "l":
+            acceleration = 0.3
+            speed = 0.3
+        else:
+            acceleration = 1.0  #Joint acceleration in rad/s^2
+            speed = 1.0 #Joint speed in rad/s
+        time = 0 #Time the move must take
+        array = list(pose)
+        array2 = list(secondPose)
+        sendable = "move%s(%s%s, a=%s, v=%s, t=%s, r=%s)\nmove%s(%s%s, a=%s, v=%s, t=%s, r=%s)"%(moveType, space, array, acceleration, speed, time, radius, moveType, space, array2, acceleration, speed, time, 0)
         return sendable
 
     def euler2Rot(self, roll, pitch, yaw):
@@ -76,10 +102,3 @@ class SendMove (object):
                 return True
             else:
                 return False
-
-# if __name__ == '__main__':
-#     try:
-#         x = SendMove()
-#         rospy.spin()             
-#     except rospy.ROSInterruptException:
-#         pass

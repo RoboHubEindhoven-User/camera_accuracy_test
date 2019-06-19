@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>suii_manipulation</name>
+  <name>camera_accuracy_test</name>
   <version>0.0.0</version>
-  <description>The ur_script_control package</description>
+  <description>The camera_accuracy_test package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
